@@ -5,7 +5,7 @@ use std::any::Any;
 use std::collections::HashMap;
 
 use std::str::FromStr;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use crate::layers::cache::CacheLayer;
 use crate::layers::header_manipulation::{HeaderManipulationLayer, Operation};
@@ -13,6 +13,8 @@ use crate::services::federation::{
     ExecutionService, QueryPlannerService, RouterService, SubgraphService,
 };
 use anyhow::Result;
+use apollo_parser::ast::Document;
+use apollo_parser::{Parser, SyntaxTree};
 use http::header::{HeaderName, COOKIE};
 use http::{HeaderValue, Request, Response};
 use tower::layer::util::Stack;
@@ -52,6 +54,9 @@ pub struct RouterRequest {
     // The original request
     pub request: Request<graphql::Request>,
 
+    // The query once it has been parsed
+    pub parsed_query: Document,
+
     pub context: Context,
 }
 
@@ -68,6 +73,9 @@ pub struct PlannedRequest {
     // Planned request includes the original request
     pub request: Request<graphql::Request>,
 
+    // The query once it has been parsed
+    pub parsed_query: Document,
+
     // And also the query plan
     pub query_plan: QueryPlan,
 
@@ -80,11 +88,14 @@ pub struct SubgraphRequest {
     // The request to make downstream
     pub subgraph_request: Request<graphql::Request>,
 
-    // And also the query plan
-    pub query_plan: Arc<QueryPlan>,
-
     // Downstream requests includes the original request
     pub request: Arc<Request<graphql::Request>>,
+
+    // The query once it has been parsed
+    pub parsed_query: Arc<Document>,
+
+    // And also the query plan
+    pub query_plan: Arc<QueryPlan>,
 
     // Cloned from PlannedRequest
     pub context: Context,
@@ -254,9 +265,15 @@ impl ApolloRouterBuilder {
                         .boxed(),
                     |acc, e| e.router_service(acc),
                 )
-                .map_request(|request| RouterRequest {
-                    request,
-                    context: Context::default(),
+                .map_request(|request: Request<graphql::Request>| {
+                    let parser = Parser::new(&request.body().body);
+                    let parsed_query = parser.parse().document();
+
+                    RouterRequest {
+                        request,
+                        parsed_query,
+                        context: Context::default(),
+                    }
                 })
                 .map_response(|response| response.response),
         );

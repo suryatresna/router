@@ -1,3 +1,4 @@
+use apollo_parser::ast::Document;
 use std::collections::HashMap;
 use std::future::Future;
 use std::pin::Pin;
@@ -30,6 +31,7 @@ impl Service<RouterRequest> for QueryPlannerService {
         let fut = async {
             Ok(PlannedRequest {
                 request: request.request,
+                parsed_query: request.parsed_query.clone(),
                 query_plan: QueryPlan {
                     service_name: "books".to_string(), //Hard coded
                 },
@@ -138,6 +140,7 @@ impl ExecutionService {
         context: &Context,
         service_name: &str,
         query_plan: &Arc<QueryPlan>,
+        parsed_query: &Arc<Document>,
         frontend_request: &Arc<Request<graphql::Request>>,
         body: &str,
     ) -> SubgraphRequest {
@@ -147,6 +150,7 @@ impl ExecutionService {
                 body: body.to_string(),
             }),
             query_plan: query_plan.clone(),
+            parsed_query: parsed_query.clone(),
             request: frontend_request.clone(),
             context: context.clone(),
         }
@@ -174,13 +178,16 @@ impl Service<PlannedRequest> for ExecutionService {
         let fut = async move {
             // Fan out, context becomes immutable at this point.
             let service_name = &req.query_plan.service_name.to_string();
+            let parsed_query = req.parsed_query.clone();
             let query_plan = Arc::new(req.query_plan);
             let frontend_request = Arc::new(req.request);
+            let parsed_query = Arc::new(req.parsed_query);
             let context = Arc::new(req.context);
             let req1 = Self::make_request(
                 &context,
                 service_name,
                 &query_plan,
+                &parsed_query,
                 &frontend_request,
                 &format!("req1: {}", &frontend_request.body().body),
             );
@@ -188,6 +195,7 @@ impl Service<PlannedRequest> for ExecutionService {
                 &context,
                 service_name,
                 &query_plan,
+                &parsed_query,
                 &frontend_request,
                 &format!("req2: {}", &frontend_request.body().body),
             );
