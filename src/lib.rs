@@ -7,8 +7,11 @@ use std::str::FromStr;
 use std::sync::Arc;
 
 use anyhow::Result;
+use futures::future::BoxFuture;
+use futures::FutureExt;
 use http::header::{HeaderName, COOKIE};
 use http::{HeaderValue, Request, Response, Uri};
+use tower::hedge::Future;
 use tower::layer::util::Stack;
 use tower::util::{BoxCloneService, BoxService};
 use tower::{BoxError, Service, ServiceBuilder, ServiceExt};
@@ -222,6 +225,9 @@ impl ApolloRouterBuilder {
     }
 
     pub fn build(mut self) -> ApolloRouter {
+        //Reverse the order of the plugins for usability
+        self.plugins.reverse();
+
         //QueryPlannerService takes an UnplannedRequest and outputs PlannedRequest
         let query_planner_service = ServiceBuilder::new().boxed_clone().buffer(1000).service(
             self.plugins
@@ -338,6 +344,19 @@ impl ApolloRouter {
 }
 
 pub trait Plugin {
+    //Configuration is untyped. Implemntations may marshal to a strongly typed object
+    fn configure(&mut self, configuration: serde_json::Value) -> Result<(), BoxError> {
+        Ok(())
+    }
+
+    // Plugins will receive a notification that they should start up and shut down.
+    fn startup(&mut self) -> BoxFuture<Result<(), BoxError>> {
+        async { Ok(()) }.boxed()
+    }
+    fn shutdown(&mut self) -> BoxFuture<Result<(), BoxError>> {
+        async { Ok(()) }.boxed()
+    }
+
     fn router_service(
         &mut self,
         service: BoxService<RouterRequest, RouterResponse, BoxError>,

@@ -1,0 +1,60 @@
+server:
+  listen: 1.2.3.4:5
+  cors:
+    origins: [foo, bar, baz]
+    methods: [foo, bar]
+subgraphs:
+  example:
+    # Here we allow anything that service builder allows
+    propagate_header: "A"
+    delete_header: "B"
+    override_url: http://foo # override_url becomes a method on ServiceBuilder
+    time_out: 2s
+    rate_limit:
+
+
+    # Default service is remote graphql service, but it could be something else.
+    service:
+      remote-graphql:
+        # Config left to service implementation
+      rest:
+        # Config left to service implementation
+
+
+plugins:
+  # Plugin config is left to the plugin implementation
+  opentelemetry:
+    otlp:
+      tracing:
+        exporter:
+          http:
+            endpoint: http://example.org
+            protocol: Grpc
+            timeout: 42
+            headers:
+              foo: bar
+        trace_config:
+          sampler:
+            ParentBased:
+              TraceIdRatioBased: 0.42
+          max_events_per_span: 1
+          max_attributes_per_span: 2
+          max_links_per_span: 3
+          max_attributes_per_event: 4
+          max_attributes_per_link: 5
+          resource:
+            attrs:
+              key1:
+                String: value
+              key2:
+                Bool: true
+              key3:
+                I64: 42
+              key4:
+                F64: 42.0
+              key5:
+                Array:
+                  String:
+                    - value1
+                    - value2
+

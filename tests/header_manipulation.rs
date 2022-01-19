@@ -180,8 +180,8 @@ async fn header_propagation() {
 
     let router = ApolloRouter::builder()
         // beware! the order matters!
-        .with_plugin(test_plugin)
         .with_plugin(MyPlugin::default())
+        .with_plugin(test_plugin)
         .build();
 
     router
