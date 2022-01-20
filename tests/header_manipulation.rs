@@ -3,7 +3,7 @@ use http::HeaderValue;
 use http::Request;
 
 #[cfg(test)]
-use apollo_router_rs::{graphql, ApolloRouter};
+use apollo_router_rs::graphql;
 
 // This would live inside the users codebase
 mod various_plugins_mod {
@@ -95,7 +95,7 @@ mod my_test_harness {
             }
 
             if let Some(expected_value) = &self.must_have_value {
-                let actual = header.clone().unwrap();
+                let actual = header.unwrap();
                 assert_eq!(
                     actual,
                     expected_value,
@@ -178,7 +178,7 @@ async fn header_propagation() {
 
     let test_plugin = HeaderPresenceTestPlugin::from_presence_requirements(my_requirements);
 
-    let router = ApolloRouter::builder()
+    let router = apollo_router_rs::builder()
         // beware! the order matters!
         .with_plugin(MyPlugin::default())
         .with_plugin(test_plugin)

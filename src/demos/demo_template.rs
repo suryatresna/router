@@ -5,9 +5,9 @@ use tower::BoxError;
 #[cfg(test)]
 use tracing::{info, Level};
 
-use crate::Plugin;
 #[cfg(test)]
-use crate::{graphql, ApolloRouter};
+use crate::graphql;
+use crate::Plugin;
 
 #[derive(Default)]
 struct MyPlugin;

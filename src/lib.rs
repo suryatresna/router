@@ -362,7 +362,7 @@ impl<
 
 pub trait Plugin {
     //Configuration is untyped. Implementations may marshal to a strongly typed object
-    fn configure(&mut self, configuration: serde_json::Value) -> Result<(), BoxError> {
+    fn configure(&mut self, _configuration: serde_json::Value) -> Result<(), BoxError> {
         Ok(())
     }
 

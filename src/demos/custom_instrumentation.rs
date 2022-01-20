@@ -8,7 +8,7 @@ use tracing::info_span;
 use tracing::{info, Level};
 
 #[cfg(test)]
-use crate::{graphql, ApolloRouter};
+use crate::graphql;
 use crate::{
     PlannedRequest, Plugin, RouterRequest, RouterResponse, ServiceBuilderExt, SubgraphRequest,
 };

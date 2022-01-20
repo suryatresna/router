@@ -6,7 +6,7 @@ mod test {
 
     use crate::services::graphql_subgraph_service::GraphQlSubgraphService;
     use crate::services::rest_subgraph_service::RestSubgraphService;
-    use crate::{graphql, ApolloRouter, RouterResponse, ServiceBuilderExt, SubgraphRequest};
+    use crate::{graphql, RouterResponse, ServiceBuilderExt, SubgraphRequest};
 
     #[tokio::test]
     async fn call_external_service() -> Result<(), BoxError> {

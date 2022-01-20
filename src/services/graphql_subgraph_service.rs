@@ -29,7 +29,7 @@ impl Service<SubgraphRequest> for GraphQlSubgraphService {
         let url = request
             .context
             .get(request.service_name.as_str())
-            .unwrap_or_else(|| &self.url)
+            .unwrap_or(&self.url)
             .clone();
 
         let fut = async move {

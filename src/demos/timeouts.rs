@@ -10,7 +10,7 @@ use tracing::info;
 use tracing::Level;
 
 #[cfg(test)]
-use crate::{graphql, ApolloRouter};
+use crate::graphql;
 use crate::{Plugin, RouterResponse, SubgraphRequest};
 
 #[derive(Default)]
