@@ -11,7 +11,6 @@ use futures::future::BoxFuture;
 use futures::FutureExt;
 use http::header::{HeaderName, COOKIE};
 use http::{HeaderValue, Request, Response, Uri};
-use tower::hedge::Future;
 use tower::layer::util::Stack;
 use tower::util::{BoxCloneService, BoxService};
 use tower::{BoxError, Service, ServiceBuilder, ServiceExt};
@@ -344,7 +343,7 @@ impl ApolloRouter {
 }
 
 pub trait Plugin {
-    //Configuration is untyped. Implemntations may marshal to a strongly typed object
+    //Configuration is untyped. Implementations may marshal to a strongly typed object
     fn configure(&mut self, configuration: serde_json::Value) -> Result<(), BoxError> {
         Ok(())
     }
