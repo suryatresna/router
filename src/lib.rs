@@ -223,7 +223,9 @@ impl ApolloRouterBuilder {
         self
     }
 
-    pub fn build(mut self) -> ApolloRouter {
+    pub fn build(
+        mut self,
+    ) -> ApolloRouter<BoxCloneService<RouterRequest, RouterResponse, BoxError>> {
         //Reverse the order of the plugins for usability
         self.plugins.reverse();
 
@@ -265,21 +267,14 @@ impl ApolloRouterBuilder {
 
         //Router service takes a graphql::Request and outputs a graphql::Response
         let router_service = ServiceBuilder::new().boxed_clone().buffer(1000).service(
-            self.plugins
-                .iter_mut()
-                .fold(
-                    RouterService::builder()
-                        .query_planner_service(query_planner_service)
-                        .query_execution_service(execution_service)
-                        .build()
-                        .boxed(),
-                    |acc, e| e.router_service(acc),
-                )
-                .map_request(|frontend_request| RouterRequest {
-                    frontend_request,
-                    context: Context::default(),
-                })
-                .map_response(|response| response.backend_response),
+            self.plugins.iter_mut().fold(
+                RouterService::builder()
+                    .query_planner_service(query_planner_service)
+                    .query_execution_service(execution_service)
+                    .build()
+                    .boxed(),
+                |acc, e| e.router_service(acc),
+            ),
         );
 
         ApolloRouter { router_service }
@@ -311,18 +306,20 @@ impl ApolloRouterBuilder {
     }
 }
 
-pub struct ApolloRouter {
-    router_service:
-        BoxCloneService<Request<graphql::Request>, Response<graphql::Response>, BoxError>,
+pub struct ApolloRouter<RouterService> {
+    router_service: RouterService,
 }
 
-impl ApolloRouter {
+impl ApolloRouter<RouterService> {
     pub fn builder() -> ApolloRouterBuilder {
         ApolloRouterBuilder::default()
     }
 }
 
-impl ApolloRouter {
+impl<
+        RouterService: Service<RouterRequest, Response = RouterResponse, Error = BoxError> + Clone,
+    > ApolloRouter<RouterService>
+{
     pub async fn start(&self) {
         todo!("This will start up Warp")
     }
@@ -337,6 +334,11 @@ impl ApolloRouter {
             .ready()
             .await
             .unwrap()
+            .map_request(|frontend_request| RouterRequest {
+                frontend_request,
+                context: Context::default(),
+            })
+            .map_response(|response| response.backend_response)
             .call(request)
             .await
     }
