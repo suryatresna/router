@@ -16,21 +16,15 @@ mod test {
             .try_init();
 
         //SubgraphService takes a SubgraphRequest and outputs a graphql::Response
-        let book_service = ServiceBuilder::new()
-            .service(
-                GraphQlSubgraphService::builder()
-                    .url(Uri::from_str("http://books").unwrap())
-                    .build(),
-            )
+        let book_service = GraphQlSubgraphService::builder()
+            .url(Uri::from_str("http://books").unwrap())
+            .build()
             .boxed_clone();
 
         //SubgraphService takes a SubgraphRequest and outputs a graphql::Response
-        let author_service = ServiceBuilder::new()
-            .service(
-                GraphQlSubgraphService::builder()
-                    .url(Uri::from_str("http://authors").unwrap())
-                    .build(),
-            )
+        let author_service = GraphQlSubgraphService::builder()
+            .url(Uri::from_str("http://authors").unwrap())
+            .build()
             .boxed_clone();
 
         let query_planner_service = ServiceBuilder::new()
