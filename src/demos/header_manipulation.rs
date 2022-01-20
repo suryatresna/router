@@ -62,9 +62,7 @@ async fn header_propagation() -> Result<(), BoxError> {
         .with_max_level(Level::INFO)
         .try_init();
 
-    let router = ApolloRouter::builder()
-        .with_plugin(MyPlugin::default())
-        .build();
+    let router = crate::builder().with_plugin(MyPlugin::default()).build();
 
     let response = router
         .call(

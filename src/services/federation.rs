@@ -43,17 +43,39 @@ impl Service<RouterRequest> for QueryPlannerService {
 }
 
 #[derive(TypedBuilder, Clone)]
-pub struct RouterService {
-    query_planner_service: BoxCloneService<RouterRequest, PlannedRequest, BoxError>,
-    query_execution_service: BoxCloneService<PlannedRequest, RouterResponse, BoxError>,
+pub struct RouterService<QueryPlannerService, ExecutionService>
+where
+    QueryPlannerService: Service<RouterRequest, Response = PlannedRequest, Error = BoxError>
+        + Clone
+        + Send
+        + 'static,
+    ExecutionService: Service<PlannedRequest, Response = RouterResponse, Error = BoxError>
+        + Clone
+        + Send
+        + 'static,
+{
+    query_planner_service: QueryPlannerService,
+    query_execution_service: ExecutionService,
     #[builder(default)]
-    ready_query_planner_service: Option<BoxCloneService<RouterRequest, PlannedRequest, BoxError>>,
+    ready_query_planner_service: Option<QueryPlannerService>,
     #[builder(default)]
-    ready_query_execution_service:
-        Option<BoxCloneService<PlannedRequest, RouterResponse, BoxError>>,
+    ready_query_execution_service: Option<ExecutionService>,
 }
 
-impl Service<RouterRequest> for RouterService {
+impl<QueryPlannerService, ExecutionService> Service<RouterRequest>
+    for RouterService<QueryPlannerService, ExecutionService>
+where
+    QueryPlannerService: Service<RouterRequest, Response = PlannedRequest, Error = BoxError>
+        + Clone
+        + Send
+        + 'static,
+    ExecutionService: Service<PlannedRequest, Response = RouterResponse, Error = BoxError>
+        + Clone
+        + Send
+        + 'static,
+    QueryPlannerService::Future: Send + 'static,
+    ExecutionService::Future: Send + 'static,
+{
     type Response = RouterResponse;
     type Error = BoxError;
     type Future = Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>> + Send>>;

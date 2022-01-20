@@ -198,6 +198,24 @@ pub struct ApolloRouterBuilder {
     )>,
 }
 
+impl<QueryPlannerService, ExecutionService>
+    From<RouterService<QueryPlannerService, ExecutionService>>
+    for ApolloRouter<RouterService<QueryPlannerService, ExecutionService>>
+where
+    QueryPlannerService: Service<RouterRequest, Response = PlannedRequest, Error = BoxError>
+        + Clone
+        + Send
+        + 'static,
+    ExecutionService: Service<PlannedRequest, Response = RouterResponse, Error = BoxError>
+        + Clone
+        + Send
+        + 'static,
+{
+    fn from(router_service: RouterService<QueryPlannerService, ExecutionService>) -> Self {
+        ApolloRouter { router_service }
+    }
+}
+
 impl ApolloRouterBuilder {
     pub fn with_plugin<E: Plugin + 'static>(mut self, plugin: E) -> ApolloRouterBuilder {
         self.plugins.push(Box::new(plugin));
@@ -310,10 +328,8 @@ pub struct ApolloRouter<RouterService> {
     router_service: RouterService,
 }
 
-impl ApolloRouter<RouterService> {
-    pub fn builder() -> ApolloRouterBuilder {
-        ApolloRouterBuilder::default()
-    }
+pub fn builder() -> ApolloRouterBuilder {
+    ApolloRouterBuilder::default()
 }
 
 impl<

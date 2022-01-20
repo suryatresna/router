@@ -40,9 +40,7 @@ async fn load_shedding() -> Result<(), BoxError> {
         .with_max_level(Level::INFO)
         .try_init();
 
-    let router = ApolloRouter::builder()
-        .with_plugin(MyPlugin::default())
-        .build();
+    let router = crate::builder().with_plugin(MyPlugin::default()).build();
 
     // first call should succeed
     let res = router

@@ -1,6 +1,7 @@
 mod context_propagation;
 mod custom_instrumentation;
 mod custom_subgraph_service;
+mod custom_wiring;
 mod demo_template;
 mod header_manipulation;
 mod load_shedding;

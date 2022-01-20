@@ -16,7 +16,7 @@ mod test {
 
         let client = reqwest::Client::default();
 
-        let router = ApolloRouter::builder()
+        let router = crate::builder()
             .with_subgraph_service(
                 "books",
                 ServiceBuilder::new().service_fn(move |req: SubgraphRequest| {

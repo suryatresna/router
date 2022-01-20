@@ -9,7 +9,7 @@ use typed_builder::TypedBuilder;
 
 use crate::{graphql, RouterResponse, SubgraphRequest};
 
-#[derive(TypedBuilder)]
+#[derive(TypedBuilder, Clone)]
 pub struct GraphQlSubgraphService {
     #[builder(setter(into))]
     url: Uri,
