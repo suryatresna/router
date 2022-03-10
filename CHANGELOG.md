@@ -7,10 +7,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 <!-- # [x.x.x] (unreleased) - 2021-mm-dd
 > Important: X breaking changes below, indicated by **❗ BREAKING ❗**
 ## ❗ BREAKING ❗
-## 🚀 Features
-## 🐛 Fixes
-## 🛠 Maintenance
-## 📚 Documentation
+## 🚀 Features ( :rocket: )
+## 🐛 Fixes ( :bug: )
+## 🛠 Maintenance ( :hammer_and_wrench: )
+## 📚 Documentation ( :books: )
 
 ## Example section entry format
 
@@ -22,7 +22,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 # [x.x.x] (unreleased) - 2021-mm-dd
 
- - **❗ BREAKING ❗**
+## ❗ BREAKING ❗
  -  **use ControlFlow in checkpoints** ([PR #602](https://github.com/apollographql/router/pull/602))
    `checkpoint` and `async_checkpoint` now `use std::ops::ControlFlow instead` of the `Step` enum. ControlFlow has two variants, `Continue` and `Break`.
  
@@ -58,17 +58,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
   Having plugins and layers as configurable items in yaml was creating confusion as to when it was appropriate to
 use a layer vs a plugin. As the layer API is a subset of the plugin API the layer option has been removed.
-## 🚀 Features
-## 🐛 Fixes
-## 🛠 Maintenance
-## 📚 Documentation
 
-## Example section entry format
+## :hammer_and_wrench: Maintenance
 
-- **Headline** via [#PR_NUMBER](https://github.com/apollographql/router/pull/PR_NUMBER)
-
-  Description! And a link to a [reference](http://url)
-
+- **Xtask improvements** ([PR ##604](https://github.com/apollographql/router/pull/604)) The command we run locally to make sure tests, lints and compliance-checks pass will now edit the license file and run cargo fmt so you can directly commit it before you open a Pull Request 
 
 # [v0.1.0-alpha.8] 2022-03-08
 
