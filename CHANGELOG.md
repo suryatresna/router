@@ -19,7 +19,13 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   Description! And a link to a [reference](http://url)
 
  -->
+
 # [x.x.x] (unreleased) - 2021-mm-dd
+
+ - **❗ BREAKING ❗**
+ -  **use ControlFlow in checkpoints** ([PR #602](https://github.com/apollographql/router/pull/602))
+   `checkpoint` and `async_checkpoint` now `use std::ops::ControlFlow instead` of the `Step` enum. ControlFlow has two variants, `Continue` and `Break`.
+ 
 ## ❗ BREAKING ❗
 - **Header propagation plugin** ([PR #599](https://github.com/apollographql/router/pull/599))
 
@@ -48,6 +54,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
         - propagate:
           matching: ".*"
     ```
+- **Remove configurable layers** ([PR #603](https://github.com/apollographql/router/pull/603))
+
+  Having plugins and layers as configurable items in yaml was creating confusion as to when it was appropriate to
+use a layer vs a plugin. As the layer API is a subset of the plugin API the layer option has been removed.
 ## 🚀 Features
 ## 🐛 Fixes
 ## 🛠 Maintenance
