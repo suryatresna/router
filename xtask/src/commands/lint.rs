@@ -14,15 +14,17 @@ impl Lint {
     }
 
     pub fn run_local(&self) -> Result<()> {
+        cargo!(["clippy", "--all", "--tests", "--", "-D", "warnings"]);
+
         if Self::check_fmt().is_err() {
+            // cargo fmt check failed, this means there is some formatting to do
+            // given this task is running locally, let's do it and let our user know
             cargo!(["fmt", "--all"]);
             eprintln!(
                 "🧹 cargo fmt job is complete 🧹\n\
                 Commit the changes and you should be good to go!"
             );
         };
-
-        cargo!(["clippy", "--all", "--tests", "--", "-D", "warnings"]);
 
         Ok(())
     }
