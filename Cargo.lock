@@ -76,7 +76,7 @@ checksum = "c1da9c412262c1dd533a84c9b867dcb4e68ab852a0936e235d75242585dda631"
 [[package]]
 name = "apollo-encoder"
 version = "0.2.3"
-source = "git+https://github.com/apollographql/apollo-rs.git?rev=75dc54cdc129d1784e92a1e5ff32e4e4f2bfc958#75dc54cdc129d1784e92a1e5ff32e4e4f2bfc958"
+source = "git+https://github.com/apollographql/apollo-rs.git?rev=06b039f4be6e04557b762d09078f7a9e07ee40a2#06b039f4be6e04557b762d09078f7a9e07ee40a2"
 
 [[package]]
 name = "apollo-federation-types"
@@ -90,16 +90,7 @@ dependencies = [
 [[package]]
 name = "apollo-parser"
 version = "0.2.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "027e04c63b91ac33053684910a90018a0e96d45d52c4489cf4c12b4cb240802d"
-dependencies = [
- "rowan",
-]
-
-[[package]]
-name = "apollo-parser"
-version = "0.2.4"
-source = "git+https://github.com/apollographql/apollo-rs.git?rev=75dc54cdc129d1784e92a1e5ff32e4e4f2bfc958#75dc54cdc129d1784e92a1e5ff32e4e4f2bfc958"
+source = "git+https://github.com/apollographql/apollo-rs.git?rev=06b039f4be6e04557b762d09078f7a9e07ee40a2#06b039f4be6e04557b762d09078f7a9e07ee40a2"
 dependencies = [
  "rowan",
 ]
@@ -113,8 +104,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "apollo-parser"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cb3f8fe8c9fb08c1e99bf4a50698adcd807cafba2d2aacc49d8ffc79123fce59"
+dependencies = [
+ "rowan",
+]
+
+[[package]]
 name = "apollo-router"
-version = "0.1.0-preview.1"
+version = "0.1.0-preview.2"
 dependencies = [
  "anyhow",
  "apollo-parser 0.2.4 (git+https://github.com/apollographql/apollo-rs.git?rev=e707e0f78f41ace1c3ecfe69bc10f4144ffbf7ac)",
@@ -124,6 +124,7 @@ dependencies = [
  "async-trait",
  "atty",
  "bytes",
+ "clap 3.1.6",
  "derivative",
  "derive_more",
  "directories",
@@ -131,6 +132,7 @@ dependencies = [
  "futures",
  "hotwatch",
  "http",
+ "humantime",
  "hyper",
  "insta",
  "itertools",
@@ -152,13 +154,12 @@ dependencies = [
  "serde_yaml",
  "startup",
  "static_assertions",
- "structopt",
  "tempfile",
  "test-log",
  "test-span",
  "thiserror",
  "tokio",
- "tokio-util 0.7.0",
+ "tokio-util 0.7.1",
  "tonic",
  "tower",
  "tower-http",
@@ -167,7 +168,7 @@ dependencies = [
  "tracing",
  "tracing-core",
  "tracing-opentelemetry",
- "tracing-subscriber 0.3.9",
+ "tracing-subscriber 0.3.10",
  "typed-builder",
  "url",
  "uuid",
@@ -176,7 +177,7 @@ dependencies = [
 
 [[package]]
 name = "apollo-router-benchmarks"
-version = "0.1.0-preview.1"
+version = "0.1.0-preview.2"
 dependencies = [
  "apollo-router",
  "apollo-router-core",
@@ -188,14 +189,14 @@ dependencies = [
  "serde_json_bytes",
  "tokio",
  "tower",
- "tracing-subscriber 0.3.9",
+ "tracing-subscriber 0.3.10",
 ]
 
 [[package]]
 name = "apollo-router-core"
-version = "0.1.0-preview.1"
+version = "0.1.0-preview.2"
 dependencies = [
- "apollo-parser 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "apollo-parser 0.2.5",
  "async-trait",
  "atty",
  "bytes",
@@ -237,7 +238,7 @@ dependencies = [
  "tower-service",
  "tower-test",
  "tracing",
- "tracing-subscriber 0.3.9",
+ "tracing-subscriber 0.3.10",
  "typed-builder",
  "url",
  "urlencoding",
@@ -246,17 +247,17 @@ dependencies = [
 [[package]]
 name = "apollo-smith"
 version = "0.1.0"
-source = "git+https://github.com/apollographql/apollo-rs.git?rev=75dc54cdc129d1784e92a1e5ff32e4e4f2bfc958#75dc54cdc129d1784e92a1e5ff32e4e4f2bfc958"
+source = "git+https://github.com/apollographql/apollo-rs.git?rev=06b039f4be6e04557b762d09078f7a9e07ee40a2#06b039f4be6e04557b762d09078f7a9e07ee40a2"
 dependencies = [
  "apollo-encoder 0.2.3",
- "apollo-parser 0.2.4 (git+https://github.com/apollographql/apollo-rs.git?rev=75dc54cdc129d1784e92a1e5ff32e4e4f2bfc958)",
+ "apollo-parser 0.2.4 (git+https://github.com/apollographql/apollo-rs.git?rev=06b039f4be6e04557b762d09078f7a9e07ee40a2)",
  "arbitrary",
  "once_cell",
 ]
 
 [[package]]
 name = "apollo-spaceport"
-version = "0.1.0-preview.1"
+version = "0.1.0-preview.2"
 dependencies = [
  "bytes",
  "clap 3.1.6",
@@ -271,13 +272,13 @@ dependencies = [
  "tonic",
  "tonic-build",
  "tracing",
- "tracing-subscriber 0.3.9",
+ "tracing-subscriber 0.3.10",
  "uname",
 ]
 
 [[package]]
 name = "apollo-uplink"
-version = "0.1.0-preview.1"
+version = "0.1.0-preview.2"
 dependencies = [
  "futures",
  "graphql_client",
@@ -287,6 +288,7 @@ dependencies = [
  "tokio",
  "tokio-stream",
  "tracing",
+ "url",
 ]
 
 [[package]]
@@ -335,7 +337,7 @@ name = "async-allow-client-id"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "apollo-parser 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "apollo-parser 0.2.5",
  "apollo-router",
  "apollo-router-core",
  "futures",
@@ -345,10 +347,10 @@ dependencies = [
  "serde_json",
  "serde_json_bytes",
  "tokio",
- "tokio-util 0.7.0",
+ "tokio-util 0.7.1",
  "tower",
  "tracing",
- "tracing-subscriber 0.3.9",
+ "tracing-subscriber 0.3.10",
 ]
 
 [[package]]
@@ -668,13 +670,9 @@ version = "2.34.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a0610544180c38b88101fecf2dd634b174a62eef6946f84dfc6a7127512b381c"
 dependencies = [
- "ansi_term",
- "atty",
  "bitflags",
- "strsim 0.8.0",
  "textwrap 0.11.0",
  "unicode-width",
- "vec_map",
 ]
 
 [[package]]
@@ -689,7 +687,7 @@ dependencies = [
  "indexmap",
  "lazy_static",
  "os_str_bytes",
- "strsim 0.10.0",
+ "strsim",
  "termcolor",
  "textwrap 0.15.0",
 ]
@@ -764,7 +762,7 @@ name = "compose-your-graphql-router"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "apollo-parser 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "apollo-parser 0.2.5",
  "apollo-router",
  "apollo-router-core",
  "futures",
@@ -772,10 +770,10 @@ dependencies = [
  "serde_json",
  "serde_json_bytes",
  "tokio",
- "tokio-util 0.7.0",
+ "tokio-util 0.7.1",
  "tower",
  "tracing",
- "tracing-subscriber 0.3.9",
+ "tracing-subscriber 0.3.10",
 ]
 
 [[package]]
@@ -817,7 +815,7 @@ name = "context-data"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "apollo-parser 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "apollo-parser 0.2.5",
  "apollo-router",
  "apollo-router-core",
  "futures",
@@ -826,10 +824,10 @@ dependencies = [
  "serde_json",
  "serde_json_bytes",
  "tokio",
- "tokio-util 0.7.0",
+ "tokio-util 0.7.1",
  "tower",
  "tracing",
- "tracing-subscriber 0.3.9",
+ "tracing-subscriber 0.3.10",
 ]
 
 [[package]]
@@ -1441,7 +1439,7 @@ name = "forbid-anonymous-operations"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "apollo-parser 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "apollo-parser 0.2.5",
  "apollo-router",
  "apollo-router-core",
  "futures",
@@ -1450,10 +1448,10 @@ dependencies = [
  "serde_json",
  "serde_json_bytes",
  "tokio",
- "tokio-util 0.7.0",
+ "tokio-util 0.7.1",
  "tower",
  "tracing",
- "tracing-subscriber 0.3.9",
+ "tracing-subscriber 0.3.10",
 ]
 
 [[package]]
@@ -1895,7 +1893,7 @@ name = "hello-world"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "apollo-parser 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "apollo-parser 0.2.5",
  "apollo-router",
  "apollo-router-core",
  "async-trait",
@@ -1906,10 +1904,10 @@ dependencies = [
  "serde_json",
  "serde_json_bytes",
  "tokio",
- "tokio-util 0.7.0",
+ "tokio-util 0.7.1",
  "tower",
  "tracing",
- "tracing-subscriber 0.3.9",
+ "tracing-subscriber 0.3.10",
 ]
 
 [[package]]
@@ -2257,7 +2255,7 @@ name = "jwt-auth"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "apollo-parser 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "apollo-parser 0.2.5",
  "apollo-router",
  "apollo-router-core",
  "async-trait",
@@ -2272,10 +2270,10 @@ dependencies = [
  "strum 0.24.0",
  "strum_macros 0.24.0",
  "tokio",
- "tokio-util 0.7.0",
+ "tokio-util 0.7.1",
  "tower",
  "tracing",
- "tracing-subscriber 0.3.9",
+ "tracing-subscriber 0.3.10",
 ]
 
 [[package]]
@@ -3285,7 +3283,7 @@ name = "propagate-status-code"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "apollo-parser 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "apollo-parser 0.2.5",
  "apollo-router",
  "apollo-router-core",
  "dashmap",
@@ -3296,10 +3294,10 @@ dependencies = [
  "serde_json",
  "serde_json_bytes",
  "tokio",
- "tokio-util 0.7.0",
+ "tokio-util 0.7.1",
  "tower",
  "tracing",
- "tracing-subscriber 0.3.9",
+ "tracing-subscriber 0.3.10",
 ]
 
 [[package]]
@@ -3656,7 +3654,7 @@ dependencies = [
 name = "router-fuzz"
 version = "0.0.0"
 dependencies = [
- "apollo-parser 0.2.4 (git+https://github.com/apollographql/apollo-rs.git?rev=75dc54cdc129d1784e92a1e5ff32e4e4f2bfc958)",
+ "apollo-parser 0.2.4 (git+https://github.com/apollographql/apollo-rs.git?rev=06b039f4be6e04557b762d09078f7a9e07ee40a2)",
  "apollo-smith",
  "env_logger",
  "libfuzzer-sys",
@@ -4171,12 +4169,6 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
 name = "strsim"
-version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8ea5119cdb4c55b55d432abb513a0429384878c15dde60cc77b1c99de1a95a6a"
-
-[[package]]
-name = "strsim"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
@@ -4417,7 +4409,7 @@ dependencies = [
  "tracing",
  "tracing-core",
  "tracing-futures",
- "tracing-subscriber 0.3.9",
+ "tracing-subscriber 0.3.10",
 ]
 
 [[package]]
@@ -4663,16 +4655,16 @@ dependencies = [
 
 [[package]]
 name = "tokio-util"
-version = "0.7.0"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64910e1b9c1901aaf5375561e35b9c057d95ff41a44ede043a03e09279eabaf1"
+checksum = "0edfdeb067411dba2044da6d1cb2df793dd35add7888d73c16e3381ded401764"
 dependencies = [
  "bytes",
  "futures-core",
  "futures-sink",
- "log",
  "pin-project-lite",
  "tokio",
+ "tracing",
 ]
 
 [[package]]
@@ -4743,7 +4735,7 @@ dependencies = [
  "rand",
  "slab",
  "tokio",
- "tokio-util 0.7.0",
+ "tokio-util 0.7.1",
  "tower-layer",
  "tower-service",
  "tracing",
@@ -4820,9 +4812,9 @@ dependencies = [
 
 [[package]]
 name = "tracing-core"
-version = "0.1.23"
+version = "0.1.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aa31669fa42c09c34d94d8165dd2012e8ff3c66aca50f3bb226b68f216f2706c"
+checksum = "90442985ee2f57c9e1b548ee72ae842f4a9a20e3f417cc38dbc5dc684d9bb4ee"
 dependencies = [
  "lazy_static",
  "valuable",
@@ -4869,7 +4861,7 @@ dependencies = [
  "tracing",
  "tracing-core",
  "tracing-log",
- "tracing-subscriber 0.3.9",
+ "tracing-subscriber 0.3.10",
 ]
 
 [[package]]
@@ -4895,9 +4887,9 @@ dependencies = [
 
 [[package]]
 name = "tracing-subscriber"
-version = "0.3.9"
+version = "0.3.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e0ab7bdc962035a87fba73f3acca9b8a8d0034c2e6f60b84aeaaddddc155dce"
+checksum = "b9df98b037d039d03400d9dd06b0f8ce05486b5f25e9a2d7d36196e142ebbc52"
 dependencies = [
  "ansi_term",
  "lazy_static",
@@ -5076,12 +5068,6 @@ name = "vcpkg"
 version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
-
-[[package]]
-name = "vec_map"
-version = "0.8.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f1bddf1187be692e79c5ffeab891132dfb0f236ed36a43c7ed39f1165ee20191"
 
 [[package]]
 name = "version_check"
@@ -5391,7 +5377,7 @@ dependencies = [
 
 [[package]]
 name = "xtask"
-version = "0.1.0-preview.1"
+version = "0.1.0-preview.2"
 dependencies = [
  "ansi_term",
  "anyhow",
