@@ -1,19 +1,16 @@
 //! Starts a server that will handle http graphql requests.
 
-mod apollo_telemetry;
 pub mod configuration;
 mod executable;
 mod files;
 mod http_server_factory;
-mod layers;
 pub mod plugins;
 mod reload;
-pub mod router_factory;
+mod router_factory;
 mod state_machine;
 pub mod subscriber;
 mod warp_http_server_factory;
 
-use crate::apollo_telemetry::SpaceportConfig;
 use crate::reload::Error as ReloadError;
 use crate::router_factory::{RouterServiceFactory, YamlRouterServiceFactory};
 use crate::state_machine::StateMachine;
@@ -36,6 +33,7 @@ use std::time::Duration;
 use thiserror::Error;
 use tokio::task::spawn;
 use tracing::subscriber::SetGlobalDefaultError;
+use url::Url;
 use Event::{Shutdown, UpdateConfiguration, UpdateSchema};
 
 type SchemaStream = Pin<Box<dyn Stream<Item = graphql::Schema> + Send>>;
@@ -70,8 +68,8 @@ pub enum FederatedServerError {
     /// could not create the HTTP server: {0}
     ServerCreationError(std::io::Error),
 
-    /// could not configure spaceport: {0}
-    ServerSpaceportError(tokio::sync::mpsc::error::SendError<SpaceportConfig>),
+    /// could not configure spaceport
+    ServerSpaceportError,
 
     /// no reload handle available
     NoReloadTracingHandleError,
@@ -108,14 +106,20 @@ pub enum SchemaKind {
         delay: Option<Duration>,
     },
 
-    /// A YAML file that may be watched for changes.
-    #[display(fmt = "File")]
+    /// Apollo managed federation.
+    #[display(fmt = "Registry")]
     Registry {
         /// The Apollo key: <YOUR_GRAPH_API_KEY>
         apollo_key: String,
 
         /// The apollo graph reference: <YOUR_GRAPH_ID>@<VARIANT>
         apollo_graph_ref: String,
+
+        /// The endpoint polled to fetch its latest supergraph schema.
+        url: Option<Url>,
+
+        /// The duration between polling
+        poll_interval: Duration,
     },
 }
 
@@ -166,30 +170,27 @@ impl SchemaKind {
             SchemaKind::Registry {
                 apollo_key,
                 apollo_graph_ref,
-            } => apollo_uplink::stream_supergraph(
-                apollo_key,
-                apollo_graph_ref,
-                //FIXME: make it configurable
-                Duration::from_secs(10),
-            )
-            .filter_map(|res| {
-                future::ready(match res {
-                    Ok(schema_result) => schema_result
-                        .schema
-                        .parse()
-                        .map_err(|e| {
-                            tracing::error!("could not parse schema: {:?}", e);
-                        })
-                        .ok(),
+                url,
+                poll_interval,
+            } => apollo_uplink::stream_supergraph(apollo_key, apollo_graph_ref, url, poll_interval)
+                .filter_map(|res| {
+                    future::ready(match res {
+                        Ok(schema_result) => schema_result
+                            .schema
+                            .parse()
+                            .map_err(|e| {
+                                tracing::error!("could not parse schema: {:?}", e);
+                            })
+                            .ok(),
 
-                    Err(e) => {
-                        tracing::error!("error downloading the schema from Uplink: {:?}", e);
-                        None
-                    }
+                        Err(e) => {
+                            tracing::error!("error downloading the schema from Uplink: {:?}", e);
+                            None
+                        }
+                    })
                 })
-            })
-            .map(|schema| UpdateSchema(Box::new(schema)))
-            .boxed(),
+                .map(|schema| UpdateSchema(Box::new(schema)))
+                .boxed(),
         }
         .chain(stream::iter(vec![NoMoreSchema]))
     }
@@ -380,6 +381,7 @@ where
     router_factory: RF,
 }
 
+/// A builder for an [`ApolloRouter`]
 #[derive(Default)]
 pub struct ApolloRouterBuilder<Factory = ()> {
     /// The Configuration that the server will use. This can be static or a stream for hot reloading.

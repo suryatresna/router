@@ -9,11 +9,21 @@
     "Migrating from @apollo/gateway": "/migrating-from-gateway",
     "Configuration": {
       "Overview": "/configuration/overview",
+      "Health check": "/configuration/health-checks",
       "CORS": "/configuration/cors",
       "Logging": "/configuration/logging",
       "Header propagation": "/configuration/header-propagation",
-      "OpenTelemetry": "/configuration/opentelemetry",
+      "Apollo telemetry": "/configuration/apollo-telemetry",
+      "Metrics": "/configuration/metrics",
+      "Tracing": "/configuration/tracing",
+      "Traffic shaping": "/configuration/traffic-shaping",
+      "Subgraph Error Inclusion": "/configuration/subgraph-error-inclusion",
       "Usage reporting": "/configuration/spaceport"
+    },
+    "Containerization": {
+      "Overview": "/containerization/overview",
+      "Docker": "/containerization/docker",
+      "Kubernetes": "/containerization/kubernetes"
     },
     "Development workflow": {
       "Build and run queries": "/development-workflow/build-run-queries",
