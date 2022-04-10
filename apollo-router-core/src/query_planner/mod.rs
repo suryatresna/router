@@ -413,6 +413,7 @@ pub(crate) mod fetch {
 
             // fix error path and erase subgraph error messages (we cannot expose subgraph information
             // to the client)
+            // forward error
             let errors = response
                 .errors
                 .into_iter()
