@@ -4,31 +4,191 @@ All notable changes to Router will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<!--# [x.x.x] (unreleased) - 2022-mm-dd
-> Important: X breaking changes below, indicated by **❗ BREAKING ❗**
-## ❗ BREAKING ❗
+# [v0.1.0-preview.3] - 2022-04-08
 ## 🚀 Features
+- **Add version flag to router** ([PR #805](https://github.com/apollographql/router/pull/805))
+
+  You can now provider a `--version or -V` flag to the router. It will output version information and terminate.
+
+- **New startup message** ([PR #780](https://github.com/apollographql/router/pull/780))
+
+  The router startup message was updated with more links to documentation and version information.
+
+- **Add better support of introspection queries** ([PR #802](https://github.com/apollographql/router/pull/802))
+
+  Before this feature the Router didn't execute all the introspection queries, only a small number of the most common ones were executed. Now it detects if it's an introspection query, tries to fetch it from cache, if it's not in the cache we execute it and put the response in the cache.
+
+- **Add an option to disable the landing page** ([PR #801](https://github.com/apollographql/router/pull/801))
+
+  By default the router will display a landing page, which could be useful in development. If this is not
+  desirable the router can be configured to not display this landing page:
+  ```yaml
+  server:
+    landing_page: false
+  ```
+
+- **Add support of metrics in `apollo.telemetry` plugin** ([PR #738](https://github.com/apollographql/router/pull/738))
+
+  The Router will now compute different metrics you can expose via Prometheus or OTLP exporter.
+
+  Example of configuration to export an endpoint (configured with the path `/plugins/apollo.telemetry/metrics`) with metrics in `Prometheus` format:
+
+  ```yaml
+  telemetry:
+    metrics:
+      exporter:
+        prometheus:
+          # By setting this endpoint you enable the prometheus exporter
+          # All our endpoints exposed by plugins are namespaced by the name of the plugin
+          # Then to access to this prometheus endpoint, the full url path will be `/plugins/apollo.telemetry/metrics`
+          endpoint: "/metrics"
+    ```
+
+- **Add experimental support of `custom_endpoint` method in `Plugin` trait** ([PR #738](https://github.com/apollographql/router/pull/738))
+
+  The `custom_endpoint` method lets you declare a new endpoint exposed for your plugin. For now it's only accessible for official `apollo.` plugins and for `experimental.`. The return type of this method is a Tower [`Service`]().
+  
+- **configurable subgraph error redaction** ([PR #797](https://github.com/apollographql/router/issues/797))
+  By default, subgraph errors are not propagated to the user. This experimental plugin allows messages to be propagated either for all subgraphs or on
+  an individual subgraph basis. Individual subgraph configuration overrides the default (all) configuration. The configuration mechanism is similar
+  to that used in the `headers` plugin:
+  ```yaml
+  plugins:
+    experimental.include_subgraph_errors:
+      all: true
+  ```
+
+- **Add a trace level log for subgraph queries** ([PR #808](https://github.com/apollographql/router/issues/808))
+
+  To debug the query plan execution, we added log messages to print the query plan, and for each subgraph query,
+  the operation, variables and response. It can be activated as follows:
+
+  ```
+  router -s supergraph.graphql --log info,apollo_router_core::query_planner::log=trace
+  ```
+
 ## 🐛 Fixes
+- **Eliminate memory leaks when tasks are cancelled** [PR #758](https://github.com/apollographql/router/pull/758)
+
+  The deduplication layer could leak memory when queries were cancelled and never retried: leaks were previously cleaned up on the next similar query. Now the leaking data will be deleted right when the query is cancelled
+
+- **Trim the query to better detect an empty query** ([PR #738](https://github.com/apollographql/router/pull/738))
+
+  Before this fix, if you wrote a query with only whitespaces inside, it wasn't detected as an empty query.
+
+- **Keep the original context in `RouterResponse` when returning an error** ([PR #738](https://github.com/apollographql/router/pull/738))
+
+  This fix keeps the original http request in `RouterResponse` when there is an error.
+
+- **add a user-agent header to the studio usage ingress submission** ([PR #773](https://github.com/apollographql/router/pull/773))
+
+  Requests to Studio now identify the router and its version
+
 ## 🛠 Maintenance
+- **A faster Query planner** ([PR #768](https://github.com/apollographql/router/pull/768))
+
+  We reworked the way query plans are generated before being cached, which lead to a great performance improvement. Moreover, the router is able to make sure the schema is valid at startup and on schema update, before you query it.
+
+- **Xtask improvements** ([PR #604](https://github.com/apollographql/router/pull/604))
+
+  The command we run locally to make sure tests, lints and compliance-checks pass will now edit the license file and run cargo fmt so you can directly commit it before you open a Pull Request
+
+- **Switch from reqwest to a Tower client for subgraph services** ([PR #769](https://github.com/apollographql/router/pull/769))
+
+  It results in better performance due to less URL parsing, and now header propagation falls under the apollo_router_core log filter, making it harder to disable accidentally
+
+- **Remove OpenSSL usage** ([PR #783](https://github.com/apollographql/router/pull/783) and [PR #810](https://github.com/apollographql/router/pull/810))
+
+  OpenSSL is used for HTTPS clients when connecting to subgraphs or the Studio API. It is now replaced with rustls, which is faster to compile and link
+
+- **Download the Studio protobuf schema during build** ([PR #776](https://github.com/apollographql/router/pull/776)
+
+  The schema was vendored before, now it is downloaded dynamically during the build process
+
+- **Fix broken benchmarks** ([PR #797](https://github.com/apollographql/router/issues/797))
+
+  the `apollo-router-benchmarks` project was failing due to changes in the query planner. It is now fixed, and its subgraph mocking code is now available in `apollo-router-core`
+
 ## 📚 Documentation
 
-## Example section entry format
+- **Document the Plugin and DynPlugin trait** ([PR #800](https://github.com/apollographql/router/pull/800)
 
-- **Headline** ([PR #PR_NUMBER](https://github.com/apollographql/router/pull/PR_NUMBER))
-
-  Description! And a link to a [reference](http://url)
-
- -->
-
-<!--# [v0.1.0-preview.2] (unreleased) - 2022-mm-dd
+  Those traits are used to extend the router with Rust plugins
+  
+# [v0.1.0-preview.2] - 2022-04-01
 ## ❗ BREAKING ❗
+
+- **CORS default Configuration** ([#40](https://github.com/apollographql/router/issues/40))
+
+  The Router will allow only the https://studio.apollographql.com origin by default, instead of any origin.
+  This behavior can still be tweaked in the [YAML configuration](https://www.apollographql.com/docs/router/configuration/cors)
+
+- **Hot reload flag** ([766](https://github.com/apollographql/router/issues/766))
+  The `--watch` (or `-w`) flag that enables hot reload was renamed to `--hr` or `--hot-reload`
+
 ## 🚀 Features
+
+- **Hot reload via en environment variable** ([766](https://github.com/apollographql/router/issues/766))
+  You can now use the `ROUTER_HOT_RELOAD=true` environment variable to have the router watch for configuration and schema changes and automatically reload.
+
+- **Container images are now available** ([PR #764](https://github.com/apollographql/router/pull/764))
+
+  We now build container images More details at:
+    https://github.com/apollographql/router/pkgs/container/router
+
+  You can use the images with docker, for example, as follows:
+    e.g.: docker pull ghcr.io/apollographql/router:v0.1.0-preview.1
+
+  The images are based on [distroless](https://github.com/GoogleContainerTools/distroless) which is a very constrained image, intended to be secure and small.
+
+  We'll provide release and debug images for each release. The debug image has a busybox shell which can be accessed using (for instance) `--entrypoint=sh`.
+
+  For more details about these images, see the docs.
+
+- **Skip and Include directives in post processing** ([PR #626](https://github.com/apollographql/router/pull/626))
+
+  The Router now understands the [@skip](https://spec.graphql.org/October2021/#sec--skip) and [@include](https://spec.graphql.org/October2021/#sec--include) directives in queries, to add or remove fields depending on variables. It works in post processing, by filtering fields after aggregating the subgraph responses.
+
+- **Add an option to deactivate introspection** ([PR #749](https://github.com/apollographql/router/pull/749))
+
+  While schema introspection is useful in development, we might not want to expose the entire schema in production,
+  so the router can be configured to forbid introspection queries as follows:
+  ```yaml
+  server:
+    introspection: false
+  ```
+
 ## 🐛 Fixes
+- **Move query dedup to an experimental `traffic_shaping` plugin** ([PR #753](https://github.com/apollographql/router/pull/753))
+
+  The experimental `traffic_shaping` plugin will be a central location where we can add things such as rate limiting and retry.
+
 - **Remove `hasNext` from our response objects** ([PR #733](https://github.com/apollographql/router/pull/733))
 
   `hasNext` is a field in the response that may be used in future to support features such as defer and stream. However, we are some way off supporting this and including it now may break clients. It has been removed.
 
+- **Extend Apollo uplink configurability** ([PR #741](https://github.com/apollographql/router/pull/741))
+
+  Uplink url and poll interval can now be configured via command line arg and env variable:
+  ```bash
+    --apollo-schema-config-delivery-endpoint <apollo-schema-config-delivery-endpoint>
+      The endpoint polled to fetch the latest supergraph schema [env: APOLLO_SCHEMA_CONFIG_DELIVERY_ENDPOINT=]
+
+    --apollo-schema-poll-interval <apollo-schema-poll-interval>
+      The time between polls to Apollo uplink. Minimum 10s [env: APOLLO_SCHEMA_POLL_INTERVAL=]  [default: 10s]
+  ```
+  In addition, other existing uplink env variables are now also configurable via arg. 
+
+- **Make deduplication and caching more robust against cancellation** [PR #752](https://github.com/apollographql/router/pull/752)
+
+  Cancelling a request could put the router in an unresponsive state where the deduplication layer or cache would make subgraph requests hang.
+
+- **Relax variables selection for subgraph queries** ([PR #755](https://github.com/apollographql/router/pull/755))
+
+  Federated subgraph queries relying on partial or invalid data from previous subgraph queries could result in response failures or empty subgraph queries. The router is now more flexible when selecting data from previous queries, while still keeping a correct form for the final response
+
 ## 🛠 Maintenance
+
 ## 📚 Documentation
 
 # [v0.1.0-preview.1] - 2022-03-23
