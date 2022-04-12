@@ -596,7 +596,7 @@ impl Query {
         if errors.is_empty() {
             Ok(())
         } else {
-            Ok(())
+            Err(Response::builder().errors(errors).build())
         }
     }
 
