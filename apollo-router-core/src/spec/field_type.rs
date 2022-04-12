@@ -51,8 +51,10 @@ impl FieldType {
                     Err(InvalidValue)
                 }
             }
+            (FieldType::Int, Value::Number(_)) => Ok(()),
             // Spec: https://spec.graphql.org/draft/#sec-Float
             (FieldType::Float, Value::Number(number)) if number.is_f64() => Ok(()),
+            (FieldType::Float, Value::Number(_)) => Ok(()),
             // "The ID scalar type represents a unique identifier, often used to refetch an object
             // or as the key for a cache. The ID type is serialized in the same way as a String;
             // however, it is not intended to be human-readable. While it is often numeric, it
@@ -87,7 +89,9 @@ impl FieldType {
             }
             // NOTE: graphql's types are all optional by default
             (_, Value::Null) => Ok(()),
-            _ => Err(InvalidValue),
+            _ =>{
+                Err(InvalidValue)
+            },
         }
     }
 
