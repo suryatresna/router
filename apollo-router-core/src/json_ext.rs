@@ -466,7 +466,7 @@ impl Path {
         if self.is_empty() {
             None
         } else {
-            Some(Path(self.iter().cloned().take(self.len() - 1).collect()))
+            Some(Path(self.iter().take(self.len() - 1).cloned().collect()))
         }
     }
 
@@ -670,5 +670,13 @@ mod tests {
         let path = Path::from("obj/arr/1");
         let result = Value::from_path(&path, json);
         assert_eq!(result, json!({"obj":{"arr":[null, {"prop1":1}]}}));
+    }
+
+    #[test]
+    fn test_from_path_flatten() {
+        let json = json!({"prop1":1});
+        let path = Path::from("obj/arr/@/obj2");
+        let result = Value::from_path(&path, json);
+        assert_eq!(result, json!({"obj":{"arr":null}}));
     }
 }

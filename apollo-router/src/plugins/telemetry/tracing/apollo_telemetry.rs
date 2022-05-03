@@ -26,6 +26,7 @@
 //!     shutdown_tracer_provider(); // sending remaining spans
 //! }
 //! ```
+use crate::plugins::telemetry::ROUTER_SPAN_NAME;
 use apollo_parser::{ast, Parser};
 use apollo_spaceport::report::{ContextualizedStats, QueryLatencyStats, StatsContext};
 use apollo_spaceport::{Reporter, ReporterGraph};
@@ -316,7 +317,7 @@ impl From<&StudioGraph> for ReporterGraph {
 impl SpanExporter for Exporter {
     /// Export spans to apollo telemetry
     async fn export(&mut self, batch: Vec<SpanData>) -> ExportResult {
-        tracing::info!("Exporting batch {}", batch.len());
+        tracing::debug!("Exporting batch {}", batch.len());
         if self.graph.is_none() {
             // It's an error to try and export statistics without
             // graph details. We enforce that elsewhere in the code
@@ -333,7 +334,7 @@ impl SpanExporter for Exporter {
         /*
          * Process the batch
          */
-        for span in batch.iter().filter(|span| span.name == "graphql_request") {
+        for span in batch.iter().filter(|span| span.name == ROUTER_SPAN_NAME) {
             // We can't process a span if we don't have a query
             if let Some(query) = span
                 .attributes

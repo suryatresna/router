@@ -1,5 +1,6 @@
 ---
 source: apollo-router/src/configuration/mod.rs
+assertion_line: 562
 expression: "&schema"
 ---
 {
@@ -348,7 +349,9 @@ expression: "&schema"
             "allow_headers": {
               "description": "The headers to allow. Defaults to the required request header for Apollo Studio",
               "default": [
-                "Content-Type"
+                "Content-Type",
+                "apollographql-client-name",
+                "apollographql-client-version"
               ],
               "type": "array",
               "items": {
@@ -426,6 +429,16 @@ expression: "&schema"
               "nullable": true
             },
             "apollo_key": {
+              "type": "string",
+              "nullable": true
+            },
+            "client_name_header": {
+              "default": "apollographql-client-name",
+              "type": "string",
+              "nullable": true
+            },
+            "client_version_header": {
+              "default": "apollographql-client-version",
               "type": "string",
               "nullable": true
             },
@@ -679,25 +692,16 @@ expression: "&schema"
                   "properties": {
                     "agent": {
                       "type": "object",
-                      "required": [
-                        "endpoint"
-                      ],
                       "properties": {
                         "endpoint": {
-                          "anyOf": [
-                            {
-                              "type": "string",
-                              "enum": [
-                                "default"
-                              ]
-                            },
-                            {
-                              "type": "string"
-                            }
-                          ]
+                          "default": "default",
+                          "type": "string"
                         }
                       },
                       "additionalProperties": false
+                    },
+                    "scheduled_delay": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false
@@ -728,12 +732,20 @@ expression: "&schema"
                         }
                       },
                       "additionalProperties": false
+                    },
+                    "scheduled_delay": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false
                 }
               ],
-              "additionalProperties": false,
+              "properties": {
+                "scheduled_delay": {
+                  "default": null,
+                  "type": "string"
+                }
+              },
               "nullable": true
             },
             "otlp": {
@@ -1045,63 +1057,10 @@ expression: "&schema"
               "nullable": true
             },
             "zipkin": {
-              "type": "object",
-              "oneOf": [
-                {
-                  "type": "object",
-                  "required": [
-                    "agent"
-                  ],
-                  "properties": {
-                    "agent": {
-                      "type": "object",
-                      "required": [
-                        "endpoint"
-                      ],
-                      "properties": {
-                        "endpoint": {
-                          "anyOf": [
-                            {
-                              "type": "string",
-                              "enum": [
-                                "default"
-                              ]
-                            },
-                            {
-                              "type": "string"
-                            }
-                          ]
-                        }
-                      },
-                      "additionalProperties": false
-                    }
-                  },
-                  "additionalProperties": false
-                },
-                {
-                  "type": "object",
-                  "required": [
-                    "collector"
-                  ],
-                  "properties": {
-                    "collector": {
-                      "type": "object",
-                      "required": [
-                        "endpoint"
-                      ],
-                      "properties": {
-                        "endpoint": {
-                          "type": "string",
-                          "format": "uri"
-                        }
-                      },
-                      "additionalProperties": false
-                    }
-                  },
-                  "additionalProperties": false
-                }
+              "type": [
+                "object",
+                "string"
               ],
-              "additionalProperties": false,
               "nullable": true
             }
           },
@@ -1112,28 +1071,6 @@ expression: "&schema"
       "additionalProperties": false
     },
     "test.always_fails_to_start": {
-      "type": "object",
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "test.always_fails_to_start_and_stop": {
-      "type": "object",
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "test.always_fails_to_stop": {
       "type": "object",
       "required": [
         "name"
